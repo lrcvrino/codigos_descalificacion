@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Códigos ILS 2025 - Salvamento</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #0f172a; /* Azul marino oscuro */
+            --accent-color: #0ea5e9; /* Azul piscina */
+            --bg-color: #f8fafc;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: #334155;
+            padding-bottom: 50px;
+        }
+
+        /* --- Header Redesign --- */
+        .header-container {
+            background-color: var(--primary-color);
+            color: white;
+            position: relative;
+            padding: 3rem 1rem 6rem 1rem;
+            text-align: center;
+        }
+
+        .header-wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            transform: rotate(180deg);
+        }
+
+        .header-wave svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 60px;
+        }
+
+        .header-wave .shape-fill {
+            fill: var(--bg-color);
+        }
+
+        /* --- Card Styling --- */
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            background: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            height: 100%;
+            cursor: pointer; /* Indica que es clicable */
+            border-left: 5px solid transparent;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .card-code {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--primary-color);
+            background: #e0f2fe;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .badge-event {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-size: 0.8rem;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-top: auto; /* Push to bottom */
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .badge-all {
+            background-color: #fff7ed;
+            color: #c2410c;
+        }
+
+        /* --- Search Box --- */
+        .search-container {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            margin-top: -40px; /* Overlap header */
+            position: relative;
+            z-index: 10;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* --- Custom Switch Fix --- */
+        .custom-switch-wrapper {
+            background-color: #f1f5f9;
+            border-radius: 10px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .form-check-input {
+            width: 3em;
+            height: 1.5em;
+            cursor: pointer;
+        }
+
+        /* --- Modal Styling --- */
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-bottom: none;
+        }
+        .modal-title-code {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+        }
+        .btn-close-white {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="header-container">
+        <h1 class="fw-bold mb-1">Códigos de Descalificación</h1>
+        <p class="opacity-75 mb-0">Normativa ILS Piscina 2025</p>
+        
+        <div class="header-wave">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+            </svg>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="search-container mx-auto col-lg-10">
+            <div class="row g-3">
+                <div class="col-12">
+                    <input type="text" id="globalSearch" class="form-control form-control-lg border-0 bg-light" placeholder="🔍 Buscar por palabra clave (ej: hundir, tubo)...">
+                </div>
+
+                <div class="col-md-4">
+                    <select id="filterType" class="form-select form-select-lg border-light bg-light text-secondary">
+                        <option value="event" selected>Por Prueba</option>
+                        <option value="code">Por Código</option>
+                        <option value="desc">Por Descripción</option>
+                    </select>
+                </div>
+                
+                <div class="col-md-8">
+                    <input type="text" id="specificSearch" class="form-control form-control-lg border-light bg-light" placeholder="Escribe la prueba (ej: Obstáculos)...">
+                </div>
+
+                <div class="col-12" id="toggleContainer">
+                    <div class="custom-switch-wrapper">
+                        <div class="d-flex flex-column">
+                            <span class="fw-bold text-dark">Incluir reglas generales</span>
+                            <small class="text-muted">Muestra también códigos de "Todas las pruebas"</small>
+                        </div>
+                        <div class="form-check form-switch m-0">
+                            <input class="form-check-input" type="checkbox" id="includeAllToggle" checked>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-5 mb-3 px-2">
+            <h5 class="fw-bold text-secondary">Listado de Infracciones</h5>
+            <span class="badge bg-secondary rounded-pill" id="resultCount">0</span>
+        </div>
+
+        <div class="row g-3" id="resultsGrid">
+            </div>
+
+        <div id="noResults" class="text-center py-5 d-none">
+            <h3 class="text-muted">No se encontraron resultados 🧐</h3>
+        </div>
+
+    </div>
+
+    <div class="modal fade" id="detailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Detalle de Infracción</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <span id="modalCode" class="display-4 fw-bold text-primary me-3"></span>
+                        <div class="vr me-3"></div>
+                        <h4 class="mb-0 text-secondary">Código de Descalificación</h4>
+                    </div>
+                    
+                    <div class="p-3 bg-light rounded mb-4">
+                        <h6 class="text-uppercase text-muted small fw-bold">Descripción</h6>
+                        <p id="modalDesc" class="fs-5 mb-0"></p>
+                    </div>
+
+                    <div>
+                        <h6 class="text-uppercase text-muted small fw-bold">Aplica a:</h6>
+                        <span id="modalEvent" class="badge bg-success fs-6 fw-normal text-wrap text-start lh-base"></span>
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success" onclick="shareWhatsapp()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-whatsapp me-2" viewBox="0 0 16 16">
+                            <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.324-.902l-.238-.141-2.457.645.656-2.458-.154-.237a6.582 6.582 0 0 1-1.353-3.69C1.135 4.365 4.214 1.285 7.994 1.285a6.593 6.593 0 0 1 4.66 1.932 6.606 6.606 0 0 1 1.934 4.66c-.004 3.639-2.961 6.595-6.592 6.595z"/>
+                        </svg>
+                        Compartir en WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- DATA ---
+        const dqData = [
+            { code: "1", desc: "No completar la prueba de acuerdo con la descripción de la prueba o reglas generales. Competir de forma deshonesta.", event: "Todas las pruebas" },
+            { code: "2", desc: "Competir dos veces en la misma prueba. Interferir a propósito. Empujar u obstruir.", event: "Todas las pruebas" },
+            { code: "3", desc: "Recibir ayuda física o material prohibida. Participación contraria al espíritu (juego limpio).", event: "Todas las pruebas" },
+            { code: "4", desc: "No presentarse en la salida (DNS) excepto finales A/B.", event: "Todas las pruebas" },
+            { code: "5", desc: "Daño deliberado a las instalaciones o propiedad.", event: "Todas las pruebas" },
+            { code: "6", desc: "Insultar o maltratar a los jueces.", event: "Todas las pruebas" },
+            { code: "7", desc: "Uso de sustancias pegajosas/adhesivas en cuerpo o material.", event: "Todas las pruebas" },
+            { code: "8", desc: "Ayudarse del fondo de la piscina (excepto donde esté permitido).", event: "Todas las pruebas" },
+            { code: "9", desc: "Salir del agua antes de la autorización del juez.", event: "Todas las pruebas" },
+            { code: "10", desc: "Movimiento de salida hacia delante antes de la señal.", event: "Todas las pruebas" },
+            { code: "11", desc: "Pasar obstáculo incorrectamente (sin volver inmediatamente para pasarlo bien).", event: "Natación obstáculos, Relevo obstáculos" },
+            { code: "12", desc: "No salir a la superficie después de la salida/viraje antes de pasar el obstáculo.", event: "Natación obstáculos, Relevo obstáculos" },
+            { code: "13", desc: "No tocar la pared/borde durante el viraje.", event: "Natación obstáculos" },
+            { code: "14", desc: "No tocar la pared/borde de llegada.", event: "Todas las pruebas" },
+            { code: "15", desc: "No salir a la superficie antes de sumergirse para recoger el maniquí.", event: "Remolque de maniquí, Remolque socorrista" },
+            { code: "16", desc: "No salir a la superficie tras entrada y antes de viraje 50m (o 1er competidor relevos).", event: "Combinada, Supersocorrista, Relevos" },
+            { code: "17", desc: "Ayudarse de elementos de la piscina (corcheras, etc.) para emerger.", event: "Todas las pruebas" },
+            { code: "18", desc: "Maniquí no está en posición correcta antes de los 5m (sin aletas).", event: "Remolque maniquí, Combinada, Super, Relevos..." },
+            { code: "19", desc: "Técnica incorrecta de remolque.", event: "Remolque de maniquí, Remolque con aletas" },
+            { code: "20", desc: "Remolcar con tubo con la cara del maniquí bajo el agua.", event: "Socorrista, Supersocorrista, Remolque socorrista" },
+            { code: "21", desc: "Soltar el maniquí antes de tocar la pared.", event: "Remolques, Combinada, Super, Relevos" },
+            { code: "22", desc: "Salir a la superficie después del viraje antes de emerger el maniquí.", event: "Combinada de salvamento" },
+            { code: "23", desc: "Maniquí no está en posición correcta antes de los 10m (con aletas).", event: "Remolque con aletas, Relevo socorrista" },
+            { code: "24", desc: "Ayudarse de elementos para fijar el tubo (salvo profundidad que permita pie).", event: "Todas las pruebas (con tubo)" },
+            { code: "25", desc: "No tocar la pared antes de tocar el maniquí en los 50m/150m.", event: "Socorrista, Supersocorrista, Remolque socorrista" },
+            { code: "26", desc: "Portador suelta maniquí antes de que el competidor toque la pared.", event: "Socorrista, Supersocorrista" },
+            { code: "27", desc: "Portador entra al agua e interfiere.", event: "Socorrista, Supersocorrista, Remolque socorrista" },
+            { code: "28", desc: "Clicar el tubo en la anilla antes de tocar pared de viraje.", event: "Socorrista, Supersocorrista, Remolque socorrista" },
+            { code: "29", desc: "Asegurar incorrectamente el tubo (no alrededor cuerpo, no bajo muñones).", event: "Socorrista, Supersocorrista, Remolque socorrista" },
+            { code: "30", desc: "No asegurar el tubo dentro de la zona de 10m de recogida.", event: "Socorrista, Supersocorrista, Remolque socorrista" },
+            { code: "31", desc: "Empujar o remolcar maniquí sin usar el tubo.", event: "Socorrista, Supersocorrista, Relevo tubo" },
+            { code: "32", desc: "Cuerda del tubo acortada intencionalmente.", event: "Socorrista, Super, Relevos tubo/combinada" },
+            { code: "33", desc: "Maniquí/víctima se separa del tubo tras los 10m.", event: "Socorrista, Super, Relevo tubo" },
+            { code: "34", desc: "Tocar pared de llegada con tubo/maniquí en posición incorrecta.", event: "Socorrista, Supersocorrista, Remolque socorrista" },
+            { code: "35", desc: "Ayuda de tercer competidor en el cambio.", event: "Relevos de remolque" },
+            { code: "36", desc: "Competidor repite dos o más postas.", event: "Relevos" },
+            { code: "37", desc: "Salida anticipada en relevos (perder contacto antes del toque).", event: "Todos los relevos" },
+            { code: "38", desc: "Cambio de maniquí fuera de zona asignada.", event: "Relevo remolque de maniquí" },
+            { code: "39", desc: "Soltar maniquí antes de que el siguiente lo coja (contacto simultáneo).", event: "Relevo remolque, Relevo socorrista" },
+            { code: "40", desc: "Competidor clica el tubo en la anilla.", event: "Relevo combinado" },
+            { code: "41", desc: "Víctima agarra el tubo por la cuerda.", event: "Relevo combinado" },
+            { code: "42", desc: "Víctima ayuda con brazos o no agarra el tubo con dos manos.", event: "Relevo combinado" },
+            { code: "43", desc: "Víctima no agarra o pierde el tubo tras línea de 10m.", event: "Relevo combinado" },
+            { code: "44", desc: "Competidor vuelve a entrar al agua tras su posta.", event: "Relevos" },
+            { code: "45", desc: "Víctima no mantiene barra agarrada al acercar cuerda.", event: "Lanzamiento de cuerda" },
+            { code: "46", desc: "Lanzador sale de su zona asignada.", event: "Lanzamiento de cuerda" },
+            { code: "47", desc: "Lanzador camina/corre con cuerda o no remolca con brazos.", event: "Lanzamiento de cuerda" },
+            { code: "48", desc: "Víctima agarra cuerda fuera de su calle.", event: "Lanzamiento de cuerda" },
+            { code: "49", desc: "Víctima no va de frente mientras es remolcada.", event: "Lanzamiento de cuerda" },
+            { code: "50", desc: "Víctima no sujeta cuerda con ambas manos.", event: "Lanzamiento de cuerda" },
+            { code: "51", desc: "Víctima trepa por la cuerda.", event: "Lanzamiento de cuerda" },
+            { code: "52", desc: "Lanzador hace lanzamientos de práctica.", event: "Lanzamiento de cuerda" },
+            { code: "53", desc: "Tercer competidor pierde contacto antes de que el maniquí rompa superficie.", event: "Relevo socorrista" },
+            { code: "54", desc: "Víctima no remolcada sobre espalda o no asegurada.", event: "Relevo rescate con tubo" },
+            { code: "55", desc: "Víctima nada a espalda o con recobro aéreo.", event: "Relevo rescate con tubo" },
+            { code: "56", desc: "Víctima toca pared antes que el socorrista.", event: "Relevo rescate con tubo" }
+        ];
+
+        // --- VARS ---
+        const grid = document.getElementById('resultsGrid');
+        const globalSearch = document.getElementById('globalSearch');
+        const specificSearch = document.getElementById('specificSearch');
+        const filterType = document.getElementById('filterType');
+        const includeAllToggle = document.getElementById('includeAllToggle');
+        const toggleContainer = document.getElementById('toggleContainer');
+        const noResults = document.getElementById('noResults');
+        const resultCount = document.getElementById('resultCount');
+
+        // Modal Elements
+        const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
+        const modalCode = document.getElementById('modalCode');
+        const modalDesc = document.getElementById('modalDesc');
+        const modalEvent = document.getElementById('modalEvent');
+        let currentShareData = {};
+
+        // --- HELPERS ---
+
+        // Normalizer function for accent-insensitive search
+        function normalize(str) {
+            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
+
+        function openModal(item) {
+            modalCode.textContent = "DQ " + item.code;
+            modalDesc.textContent = item.desc;
+            modalEvent.textContent = item.event;
+            
+            // Prepare share data
+            currentShareData = item;
+            
+            detailModal.show();
+        }
+
+        function shareWhatsapp() {
+            // Whatsapp Format
+            const text = `*⚠️ Descalificación DQ ${currentShareData.code}*\n\n_${currentShareData.desc}_\n\n🏊 *Prueba:* ${currentShareData.event}`;
+            const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        // --- RENDER ---
+        function renderCards(data) {
+            grid.innerHTML = '';
+            
+            if (data.length === 0) {
+                noResults.classList.remove('d-none');
+                resultCount.textContent = 0;
+                return;
+            }
+
+            noResults.classList.add('d-none');
+            resultCount.textContent = data.length;
+
+            data.forEach((item, index) => {
+                const isAllEvents = normalize(item.event).includes("todas las pruebas");
+                const badgeClass = isAllEvents ? 'badge-all' : 'badge-event';
+
+                // Create Element
+                const col = document.createElement('div');
+                col.className = 'col-md-6 col-lg-4';
+                
+                col.innerHTML = `
+                    <div class="card-custom p-4 d-flex flex-column h-100">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <span class="card-code">DQ ${item.code}</span>
+                            <small class="text-muted fw-bold">#${index + 1}</small>
+                        </div>
+                        <p class="card-text mb-4 text-secondary flex-grow-1">${item.desc}</p>
+                        <div class="mt-auto">
+                            <span class="${badgeClass}">
+                                ${isAllEvents ? '🌍' : '🏊'} ${item.event}
+                            </span>
+                        </div>
+                    </div>
+                `;
+
+                // Add click event for modal
+                col.querySelector('.card-custom').addEventListener('click', () => openModal(item));
+
+                grid.appendChild(col);
+            });
+        }
+
+        // --- LOGIC ---
+        function filterData() {
+            const gTerm = normalize(globalSearch.value);
+            const sTerm = normalize(specificSearch.value);
+            const fType = filterType.value; // 'code', 'desc', 'event'
+            const includeAll = includeAllToggle.checked;
+
+            const filtered = dqData.filter(item => {
+                // 1. Global Search (on all fields)
+                const globalMatch = (
+                    normalize(item.code).includes(gTerm) ||
+                    normalize(item.desc).includes(gTerm) ||
+                    normalize(item.event).includes(gTerm)
+                );
+
+                if (!globalMatch) return false;
+
+                // 2. Specific Filter
+                if (sTerm === '') return true;
+
+                if (fType === 'event') {
+                    const eventMatches = normalize(item.event).includes(sTerm);
+                    const isGeneralRule = normalize(item.event).includes("todas las pruebas");
+                    
+                    if (includeAll) {
+                        return eventMatches || isGeneralRule;
+                    } else {
+                        return eventMatches;
+                    }
+                } else {
+                    return normalize(item[fType]).includes(sTerm);
+                }
+            });
+
+            renderCards(filtered);
+        }
+
+        // --- EVENTS ---
+        function updateUI() {
+            // Show toggle only for 'event' filter
+            if (filterType.value === 'event') {
+                toggleContainer.classList.remove('d-none');
+                specificSearch.placeholder = "Escribe la prueba (ej: Obstáculos)...";
+            } else {
+                toggleContainer.classList.add('d-none');
+                if(filterType.value === 'code') specificSearch.placeholder = "Escribe el número (ej: 14)...";
+                if(filterType.value === 'desc') specificSearch.placeholder = "Escribe descripción (ej: tocar pared)...";
+            }
+            filterData();
+        }
+
+        globalSearch.addEventListener('input', filterData);
+        specificSearch.addEventListener('input', filterData);
+        filterType.addEventListener('change', updateUI);
+        includeAllToggle.addEventListener('change', filterData);
+
+        // Init
+        updateUI();
+
+    </script>
+</body>
+</html>
